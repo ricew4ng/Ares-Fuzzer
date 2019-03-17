@@ -1,2 +1,2 @@
-# Vegetable-Fuzzer
+# Ares-Fuzzer
 fuzzer. Scope: SQL Injection
