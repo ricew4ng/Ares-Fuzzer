@@ -1,6 +1,8 @@
 #coding:utf8
 
-import requests
+'''
+各种工具函数
+'''
 
 def load_vector(target_file):
 	'''
@@ -31,3 +33,16 @@ def analyze_url(url):
 	else:
 		exit(0)
 	return base_url, query_list
+	
+	
+def form_postdata(postdata):
+	'''
+	TODO: 将字典类型的postdata值转换成常规字符串类型
+	输入: dict => {"key":"value","key2":"value2",...}
+	输出: string => "key=value&key2=value2&..."
+	'''
+	r = []
+	for kv in postdata.items():
+		r.append( "=".join(kv) )
+	
+	return "&".join(r)
