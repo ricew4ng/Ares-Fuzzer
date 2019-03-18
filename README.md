@@ -1,2 +1,2 @@
 # Ares-Fuzzer
-fuzzer. Scope: SQL Injection
+fuzzer. Scope: SQL Injection，SSRF，maybe others...
