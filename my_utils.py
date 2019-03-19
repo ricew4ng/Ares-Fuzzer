@@ -35,14 +35,14 @@ def analyze_url(url):
 	return base_url, query_list
 	
 	
-def form_postdata(postdata):
+def form_dict(target_dict):
 	'''
-	TODO: 将字典类型的postdata值转换成常规字符串类型
+	TODO: 将字典类型的data/headers值转换成常规字符串类型
 	输入: dict => {"key":"value","key2":"value2",...}
 	输出: string => "key=value&key2=value2&..."
 	'''
 	r = []
-	for kv in postdata.items():
+	for kv in target_dict.items():
 		r.append( "=".join(kv) )
 	
 	return "&".join(r)

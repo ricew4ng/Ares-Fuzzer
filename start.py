@@ -3,13 +3,18 @@
 from class_fuzzer import Fuzzer
 
 if __name__ == '__main__':
-	url = 'http://localhost:89/sqli_labs/Less-16/'
+	url = 'http://localhost:89/sqli_labs/Less-18/'
 	
 	postdata = {
-		'uname'	:	'1',
-		'passwd'	:	'2',
-		'submit'	:	'Submit'
+		'uname'	:	'Dumb',
+		'passwd'	:	'Dumb',
 	}
 	
-	Fuzzer(url=url,headers={}).fuzz_sql(method='p',postdata=postdata,threshold=20)
+	headers = {
+		'User-Agent'	:	"aaa",
+		"Cookie"			:	"bbb",
+		"Referer"		:	"ccc"
+	}
+	
+	Fuzzer(url=url,headers=headers).fuzz_sql(method='p',postdata=postdata,threshold=20)
 	

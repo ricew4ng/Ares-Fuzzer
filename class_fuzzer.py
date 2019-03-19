@@ -61,6 +61,7 @@ class Fuzzer():
 				for k,v in postdata.items():
 					for vector in sql_fuzz_vectors:
 						temp = v
+						vector = vector.replace("%23","#")
 						postdata[k]+=vector
 						req = requests.post( self.url, headers=self.headers, data=postdata )
 						# 测试是否存在注入
@@ -69,14 +70,88 @@ class Fuzzer():
 						postdata[k] = temp
 					if not self.count:
 						for vector in time_based_vectors:
+							vector = vector.replace("%23","#").replace("*sleep_time*",str(sleep_time).replace("%20"," ") ).replace("*index*",str(3000000) )
 							temp = v
 							try:
 								postdata[k]+=vector
 								req = requests.post( self.url, headers=self.headers, data=postdata, timeout=sleep_time-5 )
 							except Exception as e:
-								if r: print("[*] Payload => {0} | URL => {1}".format( form_postdata(postdata),self.url ) )
+								print("[*] Payload => {0} | URL => {1}".format( form_postdata(postdata),self.url ) )
 							finally:
 								postdata[k] = temp
+								
+				test_key = ['User-Agent','Cookie','Referer']
+				for k in test_key:
+					for vector in sql_fuzz_vectors:
+						vector = vector.replace("%23","#")
+						if k in self.headers:
+							temp = self.headers[k]
+						else:
+							self.headers[k] = ""
+							temp = ""
+						self.headers[k]+=vector
+						
+						req = requests.post( self.url, headers=self.headers, data=postdata )
+						# 测试是否存在注入
+						r = self.check_sql_fuzz( req, weight_length, threshold ) 
+						if r: print("[*] Payload => {0} | URL => {1}".format( form_dict(self.headers), self.url ) )
+						self.headers[k] = temp
+						
+					if not self.count:
+						for vector in time_based_vectors:
+							vector = vector.replace("%23","#").replace("*sleep_time*",str(sleep_time).replace("%20"," ") ).replace("*index*",str(30000000))
+							if k in self.headers:
+								temp = self.headers[k]
+							else:
+								self.headers[k] = ""
+								temp = ""
+							self.headers[k]+=vector
+							try:
+								req = requests.post( self.url, headers=self.headers, data=postdata, timeout=sleep_time-5 )
+							except Exception as e:
+								print("[*] Payload => {0} | URL => {1}".format( form_dict(self.headers),self.url ) )
+							finally:
+								self.headers[k] = temp
+			
+		
+	def fuzz_headers( self, method='p', postdata={}, vectors=[],threshold=100  ):
+		'''
+		TODO: HEADERS型注入，包括USER-AGENT，REFERER，COOKIE
+		'''
+		test_key = ['User-Agent','Cookie','Referer']
+		
+		if method == 'p':
+			weight_length = self.pre_weight_length(self.url, method='p', postdata=postdata)  # 载入初始权重
+			for k in test_key:
+				for vector in vectors[0]:
+					vector = vector.replace("%23","#")
+					if k in self.headers:
+						temp = self.headers[k]
+					else:
+						self.headers[k] = ""
+						temp = ""
+					self.headers[k]+=vector
+					req = requests.post( self.url, headers=self.headers, data=postdata )
+					# 测试是否存在注入
+					r = self.check_sql_fuzz( req, weight_length, threshold ) 
+					if r: print("[*] Payload => {0} | URL => {1}".format( form_dict(self.headers), self.url ) )
+					self.headers[k] = temp
+					
+				if not self.count:
+					for vector in vectors[1]:
+						vector = vector.replace("%23","#").replace("*index*",str(sleep_time).replace("%20"," ") )
+						if k in self.headers:
+							temp = self.headers[k]
+						else:
+							self.headers[k] = ""
+							temp = ""
+						try:
+							self.headers[k]+=vector
+							req = requests.post( self.url, headers=self.headers, data=postdata, timeout=sleep_time-5 )
+						except Exception as e:
+							print("[*] Payload => {0} | URL => {1}".format( form_dict(self.headers),self.url ) )
+						finally:
+							self.headers[k] = temp
 		
 	def check_sql_fuzz(self, req, weight_length, threshold=100 ):
 		'''
