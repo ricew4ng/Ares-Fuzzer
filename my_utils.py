@@ -35,7 +35,7 @@ def analyze_url(url):
 	return base_url, query_list
 	
 	
-def form_dict(target_dict):
+def dict2string(target_dict):
 	'''
 	TODO: 将字典类型的data/headers值转换成常规字符串类型
 	输入: dict => {"key":"value","key2":"value2",...}
